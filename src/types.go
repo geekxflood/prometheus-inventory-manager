@@ -40,16 +40,25 @@ type AlertingRulesResponseType struct {
 }
 
 type RuleType struct {
-	Alerts       []AlertType       `json:"alerts"`
-	Annotations  map[string]string `json:"annotations"`
-	Health       string            `json:"health"`
-	Labels       map[string]string `json:"labels"`
-	Name         string            `json:"name"`
-	Query        string            `json:"query"`
-	Type         string            `json:"type"`
-	Duration     int               `json:"duration"`
-	Groups       []string          `json:"groups"`
-	LastExecuted int               `json:"lastExecuted"`
+	Alerts       []AlertType         `json:"alerts"`
+	Annotations  RuleAnnotationsType `json:"annotations"`
+	Health       string              `json:"health"`
+	Labels       RuleLabelsType      `json:"labels"`
+	Name         string              `json:"name"`
+	Query        string              `json:"query"`
+	Type         string              `json:"type"`
+	Duration     int                 `json:"duration"`
+	Groups       []string            `json:"groups"`
+	LastExecuted int                 `json:"lastExecuted"`
+}
+
+type RuleAnnotationsType struct {
+	Description string `json:"description"`
+	Summary     string `json:"summary"`
+}
+
+type RuleLabelsType struct {
+	Severity string `json:"severity"`
 }
 
 type AlertType struct {

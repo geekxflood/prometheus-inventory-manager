@@ -28,7 +28,7 @@ func main() {
 	metricsMetadata := GetAllMetricsMetadata(prometheusURL)
 
 	// Get all alerting rules
-	alertingRules := GetAllAlertingRules(prometheusURL)
+	AlertingRulesResponse := GetAllAlertingRules(prometheusURL)
 
 	// Write metrics metadata to CSV
 	metricsOutputFilename := "output/metrics.csv"
@@ -38,7 +38,14 @@ func main() {
 	}
 	fmt.Printf("Metrics metadata written to %s\n", metricsOutputFilename)
 
-	_ = alertingRules
+	alertingRules := AlertingRulesResponse.Data
+
+	for _, Groups := range alertingRules.Groups {
+		for _, Rule := range Groups.Rules {
+			fmt.Println(Rule.Name)
+			fmt.Println(Rule.Annotations.Description)
+		}
+	}
 
 	log.Println("Finished prometheus-inventory-exporter")
 
