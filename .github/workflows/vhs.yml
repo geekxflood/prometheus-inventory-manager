@@ -2,7 +2,7 @@ name: vhs
 on:
   push:
     paths:
-      - vhs/*.tape
+      - vhs.tape
 jobs:
   vhs:
     runs-on: ubuntu-latest
