@@ -15,7 +15,7 @@ COPY . .
 RUN apk update && apk add make git
 RUN go get ./...
 RUN mkdir /go/src/build 
-RUN go build -a -gcflags=all="-l -B" -ldflags="-w -s" -o build/prim
+RUN go build -a -gcflags=all="-l -B" -ldflags="-w -s" -o build/prim ./...
 
 # Second stage
 FROM alpine:3.17
@@ -28,6 +28,6 @@ RUN apk update
 # Install the ca-certificates package
 # RUN apk add --no-cache ca-certificates && update-ca-certificates
 
-COPY --from=builder /go/src/build/prim/usr/local/bin/prim
+COPY --from=builder /go/src/build/prim /usr/local/bin/prim
 CMD ["/usr/local/bin/prim"]
 
