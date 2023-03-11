@@ -11,4 +11,5 @@ build/
 doc/
 dashboard/
 vendor/
+output/
 LICENSE
