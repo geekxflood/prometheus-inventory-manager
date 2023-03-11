@@ -131,7 +131,6 @@ func WriteMetricsMetadataToCSV(metricsMetadata MetricsMetadataResponseType, file
 }
 
 func WriteAlertingRulesToCSV(alertingRules AlertingRulesResponseType, filename string) error {
-
 	file, err := os.Create(filename)
 	if err != nil {
 		return err
@@ -145,15 +144,36 @@ func WriteAlertingRulesToCSV(alertingRules AlertingRulesResponseType, filename s
 	// Create the regex pattern to match newline characters
 	pattern := regexp.MustCompile(`\n`)
 
+	// Get the label keys for the first rule (assuming all rules have the same keys)
+	labelKeys := make([]string, 0)
+	if len(alertingRules.Data.Groups) > 0 && len(alertingRules.Data.Groups[0].Rules) > 0 {
+		for k := range alertingRules.Data.Groups[0].Rules[0].Labels {
+			labelKeys = append(labelKeys, k)
+		}
+	}
+
 	for _, group := range alertingRules.Data.Groups {
 		for _, rule := range group.Rules {
-			instance := rule.Labels.Instance
+			instance := ""
+			if value, ok := rule.Labels["instance"]; ok {
+				instance = value
+			}
 			alertname := rule.Name
 			query := rule.Query
 			summary := pattern.ReplaceAllString(rule.Annotations.Summary, " ")
 			description := pattern.ReplaceAllString(rule.Annotations.Description, " ")
 
-			writer.Write([]string{instance, alertname, query, summary, description})
+			// Write the label values for each key
+			row := []string{instance, alertname, query, summary, description}
+			for _, key := range labelKeys {
+				value := ""
+				if v, ok := rule.Labels[key]; ok {
+					value = v
+				}
+				row = append(row, value)
+			}
+
+			writer.Write(row)
 		}
 	}
 

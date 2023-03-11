@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  prometheus-inventory-manager:
+    image: prometheus-inventory-manager:latest
+    build:
+      context: .
+      tags:
+        - prometheus-inventory-manager:latest
+    volumes:
+      - $PWD/output:/usr/local/bin/output
+    # environment:
+    #   - PROMETHEUS_URL=http://prometheus:9090

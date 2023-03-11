@@ -65,7 +65,4 @@ type AnnotationsType struct {
 	Summary     string `json:"summary"`
 }
 
-type RuleLabelsType struct {
-	Severity string `json:"severity"`
-	Instance string `json:"instance"`
-}
+type RuleLabelsType map[string]string
