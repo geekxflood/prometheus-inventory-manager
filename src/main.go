@@ -18,17 +18,13 @@ func init() {
 func main() {
 	log.Info("Starting prometheus-inventory-exporter")
 
+	SetInsecureSSL()
+
 	// Write metrics metadata to CSV
 	metricsOutputFilename := "output/metrics.csv"
 
 	// Write alerting rules to CSV
 	alertingRulesOutputFilename := "output/alertingRules.csv"
-
-	// Check if --insecure flag is set, if yes call SetInsecureSSL()
-	args := os.Args[1:]
-	if len(args) > 0 && args[0] == "--insecure" {
-		SetInsecureSSL()
-	}
 
 	// Check if Prometheus URL is set, if not use DefaultPrometheusURL
 	prometheusURL := os.Getenv("PROMETHEUS_URL")
