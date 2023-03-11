@@ -1,22 +1,34 @@
 package main
 
 import (
-	"fmt"
-	"log"
 	"os"
+
+	"github.com/charmbracelet/log"
 )
 
 const DefaultPrometheusURL = "http://localhost:9090"
 
-func init() {
-	log.SetFlags(log.LstdFlags | log.Lshortfile)
+var err error
 
+func init() {
 	// Check if output directory exists, if not create it
 	os.MkdirAll("output", os.ModePerm)
 }
 
 func main() {
-	log.Println("Starting prometheus-inventory-exporter")
+	log.Info("Starting prometheus-inventory-exporter")
+
+	// Write metrics metadata to CSV
+	metricsOutputFilename := "output/metrics.csv"
+
+	// Write alerting rules to CSV
+	alertingRulesOutputFilename := "output/alertingRules.csv"
+
+	// Check if --insecure flag is set, if yes call SetInsecureSSL()
+	args := os.Args[1:]
+	if len(args) > 0 && args[0] == "--insecure" {
+		SetInsecureSSL()
+	}
 
 	// Check if Prometheus URL is set, if not use DefaultPrometheusURL
 	prometheusURL := os.Getenv("PROMETHEUS_URL")
@@ -30,23 +42,17 @@ func main() {
 	// Get all alerting rules
 	AlertingRulesResponse := GetAllAlertingRules(prometheusURL)
 
-	// Write metrics metadata to CSV
-	metricsOutputFilename := "output/metrics.csv"
-	err := WriteMetricsMetadataToCSV(metricsMetadata, metricsOutputFilename)
+	err = WriteMetricsMetadataToCSV(metricsMetadata, metricsOutputFilename)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Write CSV MetricsMetada error", err)
 	}
-	fmt.Printf("Metrics metadata written to %s\n", metricsOutputFilename)
+	log.Info("Metrics metadata written to", "path", metricsOutputFilename)
 
-	alertingRules := AlertingRulesResponse.Data
-
-	for _, Groups := range alertingRules.Groups {
-		for _, Rule := range Groups.Rules {
-			fmt.Println(Rule.Name)
-			fmt.Println(Rule.Annotations.Description)
-		}
+	err = WriteAlertingRulesToCSV(AlertingRulesResponse, alertingRulesOutputFilename)
+	if err != nil {
+		log.Fatal("Write CSV Rules error", err)
 	}
+	log.Info("Alerting rules written to", "path", alertingRulesOutputFilename)
 
-	log.Println("Finished prometheus-inventory-exporter")
-
+	log.Info("Finished prometheus-inventory-exporter")
 }

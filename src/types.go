@@ -40,31 +40,32 @@ type AlertingRulesResponseType struct {
 }
 
 type RuleType struct {
-	Alerts       []AlertType         `json:"alerts"`
-	Annotations  RuleAnnotationsType `json:"annotations"`
-	Health       string              `json:"health"`
-	Labels       RuleLabelsType      `json:"labels"`
-	Name         string              `json:"name"`
-	Query        string              `json:"query"`
-	Type         string              `json:"type"`
-	Duration     int                 `json:"duration"`
-	Groups       []string            `json:"groups"`
-	LastExecuted int                 `json:"lastExecuted"`
+	Alerts       []AlertType     `json:"alerts"`
+	Annotations  AnnotationsType `json:"annotations"`
+	Health       string          `json:"health"`
+	Labels       RuleLabelsType  `json:"labels"`
+	Name         string          `json:"name"`
+	Query        string          `json:"query"`
+	Type         string          `json:"type"`
+	Duration     int             `json:"duration"`
+	Groups       []string        `json:"groups"`
+	LastExecuted int             `json:"lastExecuted"`
 }
 
-type RuleAnnotationsType struct {
+type AlertType struct {
+	ActiveAt    time.Time       `json:"activeAt"`
+	Annotations AnnotationsType `json:"annotations"`
+	Labels      RuleLabelsType  `json:"labels"`
+	State       string          `json:"state"`
+	Value       string          `json:"value"`
+}
+
+type AnnotationsType struct {
 	Description string `json:"description"`
 	Summary     string `json:"summary"`
 }
 
 type RuleLabelsType struct {
 	Severity string `json:"severity"`
-}
-
-type AlertType struct {
-	ActiveAt    time.Time         `json:"activeAt"`
-	Annotations map[string]string `json:"annotations"`
-	Labels      map[string]string `json:"labels"`
-	State       string            `json:"state"`
-	Value       string            `json:"value"`
+	Instance string `json:"instance"`
 }
