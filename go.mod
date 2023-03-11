@@ -1,4 +1,4 @@
-module christopherime/prim
+module geekxflood/prim
 
 go 1.20
 
