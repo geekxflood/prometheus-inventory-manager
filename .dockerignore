@@ -12,4 +12,6 @@ doc/
 dashboard/
 vendor/
 output/
+tapes/
+assets/
 LICENSE

@@ -6,6 +6,48 @@ Prometheus Inventory Manager is a command-line tool that allows you to inventory
 
 - v0.1.0 : 2023-03-11 : Initial release
 
+## Running the tool
+
+### Build binary
+
+To run the tool from source, you need to have Go installed on your machine. You can download Go from [here](https://golang.org/dl/).
+
+Once Go is installed, you can run the tool by executing the following commands:
+
+```bash
+mkdir -p binary
+go build  -a  \
+          -gcflags=all="-l -B" \
+          -ldflags="-w -s" \
+          -o binary/prometheus-inventory-manager\
+          ./...
+```
+
+### From binary
+
+```bash
+binary/prometheus-inventory-manager
+```
+
+![Gif running prometheus-inventory-manager](assets/runningBin.gif)
+
+
+### From Docker
+
+#### Build image
+
+```bash
+docker build -t prometheus-inventory-manager .
+```
+
+#### Run image
+
+```bash
+docker run -it --rm -v $(pwd)/output:/usr/local/bin/output -e PROMETHEUS_URL=http://localhost:9090 prometheus-inventory-manager
+```
+
+
+
 ## Directory mapping
 
 - `/usr/local/bin/output`: In container
