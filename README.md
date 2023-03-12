@@ -31,7 +31,6 @@ binary/prometheus-inventory-manager
 
 ![Gif running prometheus-inventory-manager](assets/runningBin.gif)
 
-
 ### From Docker
 
 #### Build image
@@ -45,8 +44,6 @@ docker build -t prometheus-inventory-manager .
 ```bash
 docker run -it --rm -v $(pwd)/output:/usr/local/bin/output -e PROMETHEUS_URL=http://localhost:9090 prometheus-inventory-manager
 ```
-
-
 
 ## Directory mapping
 
@@ -90,27 +87,17 @@ sequenceDiagram
     Tool-->>User: Export complete
 ```
 
-## Functions and Types
+### Functions
 
-### `SetInsecureSSL()`
+- `SetInsecureSSL()` This function sets the `InsecureSkipVerify` field of the TLS config to true, which allows the tool to ignore SSL certificate validation errors. This function is used in the `ApiCaller` function to allow connections to Prometheus instances with self-signed certificates.
 
-This function sets the `InsecureSkipVerify` field of the TLS config to true, which allows the tool to ignore SSL certificate validation errors. This function is used in the `ApiCaller` function to allow connections to Prometheus instances with self-signed certificates.
+- `ApiCaller(url string, method string, body io.Reader, headers map[string]string) ([]byte, int, error)` This function sends an HTTP request to a given URL with the specified method and body, and returns the response body, status code and error (if any). This function is used to interact with the Prometheus API.
 
-### `ApiCaller(url string, method string, body io.Reader, headers map[string]string) ([]byte, int, error)`
+- `GetAllMetricsMetadata(prometheusURL string) MetricsMetadataResponseType` This function retrieves the metadata for all the metrics from a given Prometheus instance by sending a GET request to the `/api/v1/targets/metadata` endpoint of the Prometheus API. The function returns a `MetricsMetadataResponseType` struct containing the metadata for each metric.
 
-This function sends an HTTP request to a given URL with the specified method and body, and returns the response body, status code and error (if any). This function is used to interact with the Prometheus API.
+- `GetAllAlertingRules(prometheusURL string) AlertingRulesResponseType` This function retrieves the alerting rules from a given Prometheus instance by sending a GET request to the `/api/v1/rules` endpoint of the Prometheus API. The function returns an `AlertingRulesResponseType` struct containing the rules.
 
-### `GetAllMetricsMetadata(prometheusURL string) MetricsMetadataResponseType`
-
-This function retrieves the metadata for all the metrics from a given Prometheus instance by sending a GET request to the `/api/v1/targets/metadata` endpoint of the Prometheus API. The function returns a `MetricsMetadataResponseType` struct containing the metadata for each metric.
-
-### `GetAllAlertingRules(prometheusURL string) AlertingRulesResponseType`
-
-This function retrieves the alerting rules from a given Prometheus instance by sending a GET request to the `/api/v1/rules` endpoint of the Prometheus API. The function returns an `AlertingRulesResponseType` struct containing the rules.
-
-### `WriteMetricsMetadataToCSV(metricsMetadata MetricsMetadataResponseType, filename string) error`
-
-This function writes the metadata for all the metrics to a CSV file named `metrics.csv` in the `output` directory. The function takes a `MetricsMetadataResponseType` struct as input, and returns an error if the file cannot be created or if there is an error while writing the data.
+-  `WriteMetricsMetadataToCSV(metricsMetadata MetricsMetadataResponseType, filename string) error` This function writes the metadata for all the metrics to a CSV file named `metrics.csv` in the `output` directory. The function takes a `MetricsMetadataResponseType` struct as input, and returns an error if the file cannot be created or if there is an error while writing the data.
 
 ### Types
 
@@ -143,3 +130,8 @@ classDiagram
     AlertingRulesResponseType
     RuleType --|> RuleAnnotationsType
 ```
+
+## External libraries
+
+- [charmbracelet/log](https://github.com/charmbracelet/log): Used to log messages to the console
+- [charmbracelet/vhs](htps://github.com/charmbracelet/vhs): Used to create gif for this README
