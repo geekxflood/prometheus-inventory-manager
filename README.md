@@ -29,7 +29,7 @@ go build  -a  \
 binary/prometheus-inventory-manager
 ```
 
-![Gif running prometheus-inventory-manager](assets/runningBin.gif)
+![Gif running prometheus-inventory-manager](https://vhs.charm.sh/vhs-3Wcj1kVbSfTiEXB3ttfOWy.gif)
 
 ### From Docker
 
@@ -39,10 +39,31 @@ binary/prometheus-inventory-manager
 docker build -t prometheus-inventory-manager .
 ```
 
+Or using `make`
+
+```bash
+make image
+```
+
+![Gif running make image](https://vhs.charm.sh/vhs-6gAfcVDMgK1HFOL52NS1PX.gif)
+
 #### Run image
 
 ```bash
 docker run -it --rm -v $(pwd)/output:/usr/local/bin/output -e PROMETHEUS_URL=http://localhost:9090 prometheus-inventory-manager
+```
+
+Or with `docker compose`
+
+```bash
+docker-compose up
+```
+
+```text
+Note:
+The PROMETHEUS_URL environment variable is optional.
+If it is not set, the tool will default to http://localhost:9090.
+You need to update the value to reflect the URL of your Prometheus instance.
 ```
 
 ## Directory mapping
