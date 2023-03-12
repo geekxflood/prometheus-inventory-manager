@@ -19,13 +19,5 @@ build:
 		-o binary/$(IMAGE_NAME) \
 		./...
 
-timestamp:
-	mkdir -p binary
-	go build -a \
-		-gcflags=all="-l -B" \
-		-ldflags="-w -s" \
-		-o binary/$(IMAGE_NAME)_$(shell date +"%Y-%m-%dT%H_%M") \
-		./...
-
 clean:
 	rm -rf binary

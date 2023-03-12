@@ -105,7 +105,6 @@ func GetAllAlertingRules(prometheusURL string) AlertingRulesResponseType {
 }
 
 func WriteMetricsMetadataToCSV(metricsMetadata MetricsMetadataResponseType, filename string) error {
-
 	file, err := os.Create(filename)
 	if err != nil {
 		return err
@@ -114,17 +113,29 @@ func WriteMetricsMetadataToCSV(metricsMetadata MetricsMetadataResponseType, file
 
 	writer := csv.NewWriter(file)
 	defer writer.Flush()
-	writer.Write([]string{"instance", "job", "metric", "type", "help", "unit"})
 
+	// Generate the CSV header dynamically based on the keys in metricsMetadata.Data.Target
+	targetKeys := make([]string, 0, len(metricsMetadata.Data[0].Target))
+	for k := range metricsMetadata.Data[0].Target {
+		targetKeys = append(targetKeys, k)
+	}
+	header := append([]string{"metric", "type", "help", "unit"}, targetKeys...)
+	writer.Write(header)
+
+	pattern := regexp.MustCompile(`\n`)
 	for _, metadata := range metricsMetadata.Data {
-		instance := metadata.Target.Instance
-		job := metadata.Target.Job
-		metric := metadata.Metric
-		metricType := metadata.Type
-		help := metadata.Help
-		unit := metadata.Unit
+		metric := pattern.ReplaceAllString(metadata.Metric, " ")
+		metricType := pattern.ReplaceAllString(metadata.Type, " ")
+		help := pattern.ReplaceAllString(metadata.Help, " ")
+		unit := pattern.ReplaceAllString(metadata.Unit, " ")
 
-		writer.Write([]string{instance, job, metric, metricType, help, unit})
+		// Construct the row to write to the CSV
+		row := make([]string, 0, len(targetKeys)+4)
+		row = append(row, metric, metricType, help, unit)
+		for _, key := range targetKeys {
+			row = append(row, metadata.Target[key])
+		}
+		writer.Write(row)
 	}
 
 	return nil
@@ -139,38 +150,52 @@ func WriteAlertingRulesToCSV(alertingRules AlertingRulesResponseType, filename s
 
 	writer := csv.NewWriter(file)
 	defer writer.Flush()
-	writer.Write([]string{"instance", "alertname", "query", "summary", "description"})
+
+	// Generate the CSV header dynamically based on the label and annotation keys
+	labelKeys := make(map[string]bool)
+	annotationKeys := make(map[string]bool)
+	for _, group := range alertingRules.Data.Groups {
+		for _, rule := range group.Rules {
+			for k := range rule.Labels {
+				labelKeys[k] = true
+			}
+			for k := range rule.Annotations {
+				annotationKeys[k] = true
+			}
+		}
+	}
+	header := []string{"alertname", "query"}
+	for k := range labelKeys {
+		header = append(header, k)
+	}
+	for k := range annotationKeys {
+		header = append(header, k)
+	}
+	writer.Write(header)
 
 	// Create the regex pattern to match newline characters
 	pattern := regexp.MustCompile(`\n`)
 
-	// Get the label keys for the first rule (assuming all rules have the same keys)
-	labelKeys := make([]string, 0)
-	if len(alertingRules.Data.Groups) > 0 && len(alertingRules.Data.Groups[0].Rules) > 0 {
-		for k := range alertingRules.Data.Groups[0].Rules[0].Labels {
-			labelKeys = append(labelKeys, k)
-		}
-	}
-
 	for _, group := range alertingRules.Data.Groups {
 		for _, rule := range group.Rules {
-			instance := ""
-			if value, ok := rule.Labels["instance"]; ok {
-				instance = value
-			}
 			alertname := rule.Name
 			query := rule.Query
-			summary := pattern.ReplaceAllString(rule.Annotations.Summary, " ")
-			description := pattern.ReplaceAllString(rule.Annotations.Description, " ")
 
-			// Write the label values for each key
-			row := []string{instance, alertname, query, summary, description}
-			for _, key := range labelKeys {
+			// Write the label and annotation values for each key
+			row := []string{alertname, query}
+			for k := range labelKeys {
 				value := ""
-				if v, ok := rule.Labels[key]; ok {
+				if v, ok := rule.Labels[k]; ok {
 					value = v
 				}
 				row = append(row, value)
+			}
+			for k := range annotationKeys {
+				value := ""
+				if v, ok := rule.Annotations[k]; ok {
+					value = v
+				}
+				row = append(row, pattern.ReplaceAllString(value, " "))
 			}
 
 			writer.Write(row)

@@ -15,14 +15,11 @@ type MetricsMetadataResponseType struct {
 }
 
 type MetricsMetadataType struct {
-	Target struct {
-		Instance string `json:"instance"`
-		Job      string `json:"job"`
-	} `json:"target"`
-	Metric string `json:"metric"`
-	Type   string `json:"type"`
-	Help   string `json:"help"`
-	Unit   string `json:"unit"`
+	Target map[string]string `json:"target"`
+	Metric string            `json:"metric"`
+	Type   string            `json:"type"`
+	Help   string            `json:"help"`
+	Unit   string            `json:"unit"`
 }
 
 type TargetMetadataType struct {
@@ -40,29 +37,22 @@ type AlertingRulesResponseType struct {
 }
 
 type RuleType struct {
-	Alerts       []AlertType     `json:"alerts"`
-	Annotations  AnnotationsType `json:"annotations"`
-	Health       string          `json:"health"`
-	Labels       RuleLabelsType  `json:"labels"`
-	Name         string          `json:"name"`
-	Query        string          `json:"query"`
-	Type         string          `json:"type"`
-	Duration     int             `json:"duration"`
-	Groups       []string        `json:"groups"`
-	LastExecuted int             `json:"lastExecuted"`
+	Alerts       []AlertType       `json:"alerts"`
+	Annotations  map[string]string `json:"annotations"`
+	Health       string            `json:"health"`
+	Labels       map[string]string `json:"labels"`
+	Name         string            `json:"name"`
+	Query        string            `json:"query"`
+	Type         string            `json:"type"`
+	Duration     int               `json:"duration"`
+	Groups       []string          `json:"groups"`
+	LastExecuted int               `json:"lastExecuted"`
 }
 
 type AlertType struct {
-	ActiveAt    time.Time       `json:"activeAt"`
-	Annotations AnnotationsType `json:"annotations"`
-	Labels      RuleLabelsType  `json:"labels"`
-	State       string          `json:"state"`
-	Value       string          `json:"value"`
+	ActiveAt    time.Time         `json:"activeAt"`
+	Annotations map[string]string `json:"annotations"`
+	Labels      map[string]string `json:"labels"`
+	State       string            `json:"state"`
+	Value       string            `json:"value"`
 }
-
-type AnnotationsType struct {
-	Description string `json:"description"`
-	Summary     string `json:"summary"`
-}
-
-type RuleLabelsType map[string]string
