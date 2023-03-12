@@ -113,16 +113,23 @@ sequenceDiagram
     User->>+Tool: Run prometheus-inventory-manager
     Tool->>Tool: Check PROMETHEUS_URL environment variable
     alt PROMETHEUS_URL is set
-        Tool-->>Prometheus: Send GET request to /api/v1/targets/metadata
+        Tool-->>Prometheus: Send GET request to <PROMETHEUS_URL>/api/v1/targets/metadata
     else PROMETHEUS_URL is not set
         Tool-->>Prometheus: Send GET request to http://localhost:9090/api/v1/targets/metadata
     end
+    alt PROMETHEUS_URL is set
+        Tool-->>Prometheus: Send GET request to <PROMETHEUS_URL>/api/v1/rules
+    else PROMETHEUS_URL is not set
+        Tool-->>Prometheus: Send GET request to http://localhost:9090/api/v1/rules
+    end
     Prometheus-->>Tool: Return metadata for all metrics
+    Prometheus-->>Tool: Return rules for all rules
     Tool-->>Tool: Write metadata to CSV file
+    Tool-->>Tool: Write rules to CSV file
     Tool-->>User: Export complete
 ```
 
 ## External libraries
 
 - [charmbracelet/log](https://github.com/charmbracelet/log): Used to log messages to the console
-- [charmbracelet/vhs](htps://github.com/charmbracelet/vhs): Used to create gifs for this README
+- [charmbracelet/vhs](https://github.com/charmbracelet/vhs): Used to create gifs for this README
