@@ -4,7 +4,7 @@ Prometheus Inventory Manager is a command-line tool that allows you to inventory
 
 ## Versioning
 
-- v1.0.0 : 2021-03-11 : Initial stable release
+- v1.0.0 : 2023-03-12 : Initial stable release
 - v0.1.0 : 2023-03-11 : Initial release
 
 ## Running the tool
